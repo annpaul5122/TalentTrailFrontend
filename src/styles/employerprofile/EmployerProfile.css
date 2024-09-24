@@ -1,0 +1,12 @@
+.file-input-container {
+    position: relative;
+  }
+  
+  .file-input-label {
+    position: absolute;
+    top: -20px; /* Adjust this value as needed */
+    left: 10px; /* Adjust this value as needed */
+    font-size: 12px; /* Adjust size as needed */
+    color: #6c757d; /* Change color if needed */
+    pointer-events: none; /* Prevent label from capturing clicks */
+  }

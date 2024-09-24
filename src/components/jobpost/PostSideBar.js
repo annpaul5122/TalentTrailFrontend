@@ -32,14 +32,14 @@ const PostSideBar = () => {
       <div className="sidebar">
         <ul>
           <li>
-            <Link to="/employer/createpost" className="create-post-button">
+            <Link to="/employer/create" className="create-post-button">
               Create Post <span className="plus-icon">+</span>
             </Link>
           </li>
-          <li><a href="#">
+          <li><a href="/employer/createpost">
             <FaBook /> <span className="title">Books</span>
           </a></li>
-          <li><a href="#">
+          <li><a href="/employer/seepost">
             <FaFileVideo /> <span className="title">Movies</span>
           </a></li>
           <li><a href="#">
@@ -55,12 +55,7 @@ const PostSideBar = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="main_container">
-        <div className="item">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-        <div className="item">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-        <div className="item">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-        <div className="item">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
-      </div>
+      
     </div>
   );
 };

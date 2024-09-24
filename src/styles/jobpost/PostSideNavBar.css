@@ -1,6 +1,7 @@
 /* Wrapper layout */
 .wrapper {
   display: flex;
+  width: 70px;
   height: 100vh;
   transition: all 0.3s ease;
 }

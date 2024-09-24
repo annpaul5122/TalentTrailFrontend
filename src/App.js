@@ -8,6 +8,9 @@ import JobseekerProfile from "./pages/JobseekerProfile";
 import EmployerProfile from "./pages/EmployerProfile";
 import JobPost from "./pages/JobPost"
 import { BrowserRouter,Routes,Route } from "react-router-dom";
+import { CreatePost } from "./pages/CreatePost";
+import { DisplayPost } from "./pages/DisplayPost";
+import JobPostLayout from "./components/jobpost/JobPostLayout";
 
 function App() {
   return (
@@ -22,7 +25,13 @@ function App() {
         <Route path='/employer' element={<EmployerHome/>}/>
         <Route path='/signup/jobseeker/profile/:userId' element={<JobseekerProfile/>}/>
         <Route path='/signup/employer/profile/:userId' element={<EmployerProfile/>}/>
-        <Route path='/employer/jobpost' element={<JobPost/>}/>
+
+
+        <Route path='/employer/*' element={<JobPostLayout/>}>
+          <Route path="createpost" element={<CreatePost />}/>
+          <Route path="seepost" element={<DisplayPost/>}/>
+        </Route>
+
       </Routes>
     </BrowserRouter>
   );

@@ -17,6 +17,7 @@ import Logo from '../../assets/images/logo-trail1.png';
 import Icon from '../../assets/images/profile.png';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 const pages = ['Recommended Jobs', 'Application Status', 'Saved Jobs'];
 const settings = ['View Profile', 'Logout'];
@@ -80,6 +81,8 @@ function Menubar() {
     setAnchorElUser(null);
   };
 
+  const [searchTerm,setSearchTerm] = useState("")
+
   const handleSearchClick = () => {
     navigate('/jobseeker/search'); 
   };
@@ -142,6 +145,15 @@ function Menubar() {
                 placeholder="Search for jobs"
                 sx={{fontFamily: 'Poppins'}}
                 inputProps={{ 'aria-label': 'search' }}
+                onChange={(event)=>{
+                  setSearchTerm(event.target.value)
+                }}
+                onKeyDown={(event)=>{
+                  if(event.key=='Enter'){
+                    console.log(searchTerm);
+                      navigate("/jobseeker/jobposts",{ state: { searchTerm } })
+                  }
+                }}
               />
             </Search>
           </Box>

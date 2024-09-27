@@ -13,6 +13,7 @@ import ViewApplicants from "./components/jobpost/ViewApplicants";
 import JobSeekerSearch from "./pages/JobSeekerSearch";
 import { BrowserRouter,Routes,Route } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { JobPostsForSeeker } from "./pages/JobPostsForSeeker";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
 
         <Route path='/jobseeker/*' element={<JobSeekerSearch/>}> 
             <Route path='home' element={<JobseekerHome/>}/>
+            <Route path="jobposts" element={<JobPostsForSeeker/>}/>
         </Route>
 
       </Routes>

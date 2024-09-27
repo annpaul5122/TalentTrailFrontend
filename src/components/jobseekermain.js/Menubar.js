@@ -16,6 +16,7 @@ import { styled, alpha } from '@mui/material/styles';
 import Logo from '../../assets/images/logo-trail1.png';
 import Icon from '../../assets/images/profile.png';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const pages = ['Recommended Jobs', 'Application Status', 'Saved Jobs'];
 const settings = ['View Profile', 'Logout'];
@@ -61,6 +62,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 function Menubar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -76,6 +78,10 @@ function Menubar() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleSearchClick = () => {
+    navigate('/jobseeker/search'); 
   };
 
   return (
@@ -128,7 +134,7 @@ function Menubar() {
             </Box>
 
             {/* Search Bar */}
-            <Search>
+            <Search onClick={handleSearchClick}>
               <SearchIconWrapper>
                 <SearchIcon />
               </SearchIconWrapper>

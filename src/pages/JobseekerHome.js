@@ -6,7 +6,6 @@ import Footer from "../components/homepage/Footer";
 const JobseekerHome = () => {
     return(
         <div>
-            <Menubar/>
             <JobseekerSection/>
             <Resumetip/>
             <Footer/>

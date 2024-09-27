@@ -1,6 +1,7 @@
 /* Wrapper layout */
 .wrapper {
   display: flex;
+  width: 80px;
   height: 100vh;
   transition: all 0.3s ease;
 }
@@ -82,11 +83,11 @@
   margin-left: 10px;
 }
 
-.sidebar ul li a:hover, .sidebar ul li a.active {
+/* .sidebar ul li a:hover, .sidebar ul li a.active {
   background-color: #15507a66;
-}
+} */
 
-.main_container {
+.main_container,.outlet_container {
   flex-grow: 1;
   padding: 60px 20px 20px 280px; /* Adjusted padding to account for smaller top bar */
   background-color: white;
@@ -110,7 +111,7 @@
   display: none;
 }
 
-.collapsed .main_container {
+.collapsed .main_container, .collapsed .outlet_container {
   padding-left: 100px;
 }
 
@@ -124,30 +125,37 @@
     display: none;
   }
 
-  .main_container {
+  .main_container, .outlet_container {
     padding-left: 100px;
   }
 }
 
-.create-post-button {
-    display: flex;
-    align-items: center; /* Center text and icon vertically */
-    justify-content: center; /* Center content */
-    background-color: white; /* Background color for the button */
-    color: #0A3D62; /* Text color */
-    border: none; /* No border */
-    border-radius: 25px; /* Make the button rounded */
-    padding: 10px 20px; /* Padding for the button */
-    margin: 10px 0; /* Margin for spacing */
-    text-decoration: none; /* Remove underline */
-    font-weight: bold; /* Make text bold */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+.post-button {
+  display: flex;
+  align-items: center; /* Center text and icon vertically */
+  justify-content: center; /* Center content */
+  background-color: #0A3D62; /* Initial blue background */
+  color: white; /* Initial white font color */
+  border: none; /* No border */
+  border-radius: 25px; /* Rounded button */
+  padding: 10px 20px; /* Button padding */
+  margin: 10px 0; /* Margin for spacing */
+  text-decoration: none; /* No underline */
+  font-weight: bold; /* Bold text */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for background and text color */
 }
 
+.post-button:hover {
+  background-color: white; /* Change background to white on hover */
+  color: #0A3D62; /* Change text color to blue on hover */
+  cursor: pointer; /* Optional: pointer cursor on hover */
+}
 
 .plus-icon {
-    margin-left: 5px; /* Space between text and + symbol */
-    font-weight: bold; /* Make + symbol bold */
+  margin-left: 5px; /* Space between text and + symbol */
+  font-weight: bold; /* Bold + symbol */
 }
+
+
 
   

@@ -83,10 +83,6 @@ function Menubar() {
 
   const [searchTerm,setSearchTerm] = useState("")
 
-  const handleSearchClick = () => {
-    navigate('/jobseeker/search'); 
-  };
-
   return (
     <AppBar position="static" sx={{ backgroundColor: '#f5f5f5', color: 'black' }}>
       <Container maxWidth="xl">
@@ -137,7 +133,7 @@ function Menubar() {
             </Box>
 
             {/* Search Bar */}
-            <Search onClick={handleSearchClick}>
+            <Search>
               <SearchIconWrapper>
                 <SearchIcon />
               </SearchIconWrapper>

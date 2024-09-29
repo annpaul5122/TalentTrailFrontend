@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap'; // Import Modal and Button from react-bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap CSS
 import '../styles/jobpost/JobPostCard.css'; // Assuming this is where your CSS is stored
@@ -9,9 +9,10 @@ import noResultsImage from '../assets/images/No Results.svg'; // Path to the ima
 export const JobPostsForSeeker = () => {
     const location = useLocation();
     const { searchTerm } = location.state;
-
+    const navigate = useNavigate();
     // State for job posts, toggle, and filter options
     const [jobPosts, setJobPosts] = useState([]);
+    const [appliedJobs, setAppliedJobs] = useState([]);
     const [showFilters, setShowFilters] = useState(false);  // Toggle for filter display
     const [filters, setFilters] = useState({
         location: '',
@@ -22,6 +23,7 @@ export const JobPostsForSeeker = () => {
     const [noResults, setNoResults] = useState(false);  // State for handling no results
     const [showModal, setShowModal] = useState(false);  // State to handle modal visibility
     const [selectedJobPost, setSelectedJobPost] = useState(null); // State for selected job post
+    const seekerId = localStorage.getItem("SeekerId");
 
     // Fetch job posts on component mount or searchTerm change
     useEffect(() => {
@@ -44,8 +46,21 @@ export const JobPostsForSeeker = () => {
                 }
             }
         };
+
+        const fetchAppliedJobs = async () => {
+            try {
+                const res = await axios.get("https://localhost:7119/api/JobSeekers/appliedJobs", {
+                    params: { seekerId } 
+                });
+                setAppliedJobs(res.data.$values); 
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
         fetchJobPosts();
-    }, [searchTerm]);
+        fetchAppliedJobs();
+    }, [searchTerm,seekerId]);
 
     // Fetch job posts based on selected filters
     const applyFilters = async () => {
@@ -178,14 +193,19 @@ export const JobPostsForSeeker = () => {
                         >
                             <div className="job-post-header">
                                 <h2 className="job-title">{item.jobTitle}</h2>
-                                <p className="job-location">{item.jobLocation}</p>
+                                <p className="job-location"><strong>{item.companyName}, </strong>{item.jobLocation}</p>
                             </div>
                             <div className="job-post-details">
                                 <span className="employment-type-badge">{item.employmentType}</span>
                                 <p className="application-deadline"><strong>Deadline:</strong> {formatDate(item.applicationDeadline)}</p>
                                 <p className="job-requirements"><strong>Requirements:</strong> {item.jobRequirements}</p>
                             </div>
-                            <button className="apply-now-button">Apply Now</button>
+                            <button
+                                className="apply-now-button"
+                                disabled={appliedJobs.includes(item.jobId)}
+                            >
+                                {appliedJobs.includes(item.jobId) ? "Applied" : "Apply Now"}
+                            </button>
                         </div>
                     ))
                 )}
@@ -198,6 +218,9 @@ export const JobPostsForSeeker = () => {
                         <Modal.Title>{selectedJobPost.jobTitle}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                        <p><strong>Company:</strong> {selectedJobPost.companyName}</p>
+                        <p><strong>Company Description:</strong> {selectedJobPost.companyDescription}</p>
+                        <p><strong>Company Website:</strong> {selectedJobPost.companyWebUrl}</p>
                         <p><strong>Description:</strong> {selectedJobPost.jobDescription}</p>
                         <p><strong>Requirements:</strong> {selectedJobPost.jobRequirements}</p>
                         <p><strong>Location:</strong> {selectedJobPost.jobLocation}</p>
@@ -207,12 +230,19 @@ export const JobPostsForSeeker = () => {
                         <p><strong>Application Deadline:</strong> {formatDate(selectedJobPost.applicationDeadline)}</p>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={handleCloseModal}>
+                        <Button variant="secondary" style={{fontSize: '14px'}} onClick={handleCloseModal}>
                             Close
                         </Button>
-                        <Button variant="primary" onClick={() => alert("Apply Now clicked!")}>
-                            Apply Now
-                        </Button>
+                        <Button style={{ 
+                  backgroundColor: '#0A3D62', 
+                  color: 'white', 
+                  border: 'none',
+                  fontSize: '14px', 
+                  marginRight: '12px' 
+                }} onClick={() => navigate(`/jobseeker/applications/apply/${selectedJobPost.jobId}`)} 
+                disabled={appliedJobs.includes(selectedJobPost.jobId)} >
+                    {appliedJobs.includes(selectedJobPost.jobId) ? "Applied" : "Apply Now"}
+                </Button>
                     </Modal.Footer>
                 </Modal>
             )}

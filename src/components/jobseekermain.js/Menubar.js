@@ -19,7 +19,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
-const pages = ['Recommended Jobs', 'Application Status', 'Saved Jobs'];
+const pages = ['Application Status'];
 const settings = ['View Profile', 'Logout'];
 
 const Search = styled('div')(({ theme }) => ({
@@ -65,6 +65,9 @@ function Menubar() {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();
 
+  const seekerId = localStorage.getItem("SeekerId");
+  console.log("seeker:",seekerId);
+
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -81,6 +84,14 @@ function Menubar() {
     setAnchorElUser(null);
   };
 
+  const handleMenuItemClick = (page) => {
+    handleCloseNavMenu();
+    if(page==='Application Status')
+    {
+      navigate(`/jobseeker/applications/${seekerId}`);
+    }
+  }
+
   const [searchTerm,setSearchTerm] = useState("")
 
   return (
@@ -88,7 +99,7 @@ function Menubar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
           {/* Logo Image that links to Home */}
-          <Link to="/jobseeker">
+          <Link to="/jobseeker/home">
             <img
               src={Logo}
               alt="logo"
@@ -125,7 +136,7 @@ function Menubar() {
                 sx={{ marginTop: '15px', fontFamily: 'Poppins',borderRadius: '25px'}} // Position the dropdown below the AppBar
               >
                 {pages.map((page) => (
-                  <MenuItem key={page} onClick={handleCloseNavMenu}>
+                  <MenuItem key={page} onClick={()=>handleMenuItemClick(page)}>
                     <Typography textAlign="center">{page}</Typography>
                   </MenuItem>
                 ))}

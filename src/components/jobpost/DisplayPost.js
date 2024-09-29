@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
 import { Modal, Form, Button } from 'react-bootstrap';
 import axios from 'axios';
@@ -17,8 +17,9 @@ export default function DisplayPost({ jobPosts }) {
     salaryRange: '',
     employmentType: '',
     applicationDeadline: '',
+    companyId: null,
   });
-  
+  const [companies, setCompanies] = useState([]);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
 
   const getBadgeColor = (employmentType) => {
@@ -41,6 +42,8 @@ export default function DisplayPost({ jobPosts }) {
     setSelectedJob(job);
     setFormData({
       jobTitle: job.jobTitle,
+      companyName: job.companyName,
+      companyId : job.companyId,
       jobDescription: job.jobDescription,
       jobRequirements: job.jobRequirements,
       jobLocation: job.jobLocation,
@@ -52,6 +55,14 @@ export default function DisplayPost({ jobPosts }) {
     setIsEditing(false);
     setIsModalOpen(true);
   };
+
+  useEffect(() => {
+    if (isModalOpen) {
+      axios.get('https://localhost:7119/api/CompanyDetails')
+        .then(response => setCompanies(response.data.$values))
+        .catch(error => console.error('Failed to fetch companies', error));
+    }
+  }, [isModalOpen]);
 
   const handleViewApplicants = (selectedJob) => {
     navigate(`/employer/jobpost/posts/viewapplicants/${selectedJob.jobId}`); 
@@ -67,7 +78,8 @@ export default function DisplayPost({ jobPosts }) {
         SalaryRange: formData.salaryRange || selectedJob.salaryRange,
         EmploymentType: employmentTypeOptions.find(option => option.label === formData.employmentType)?.value, 
         ApplicationDeadline: formData.applicationDeadline, 
-        Industry: formData.industry
+        Industry: formData.industry,
+        CompanyId: formData.companyId,
       };
 
 
@@ -126,6 +138,7 @@ export default function DisplayPost({ jobPosts }) {
                 <div className='d-flex align-items-center'>
                   <div className='ms-3'>
                     <p className='fw-bold mb-1'>{job.jobTitle}</p>
+                    <p className='text-muted mb-0'>{job.companyName}</p>
                   </div>
                 </div>
               </td>
@@ -166,6 +179,29 @@ export default function DisplayPost({ jobPosts }) {
                   readOnly={!isEditing}
                   onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
                 />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Company</Form.Label>
+                {isEditing ? (
+                  <Form.Control
+                    as="select"
+                    value={formData.companyId}
+                    onChange={(e) => setFormData({ ...formData, companyId: e.target.value })}
+                  >
+                    <option value="">Select a company</option>
+                    {companies.map((company) => (
+                      <option key={company.companyId} value={company.companyId}>
+                        {company.companyName}
+                      </option>
+                    ))}
+                  </Form.Control>
+                ) : (
+                  <Form.Control
+                    type="text"
+                    value={formData.companyName}
+                    readOnly={!isEditing}
+                  />
+                )}
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Job Description</Form.Label>

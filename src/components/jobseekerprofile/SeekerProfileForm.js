@@ -134,7 +134,10 @@ const ProfileForm = ({userId}) => {
       const response = await axios.post('https://localhost:7119/api/JobSeekers/ProfileCreation',profileData);
       console.log('Profile created successfully:', response.data);
       if (response.status === 200) {
-        navigate('/login');
+        const seekerId = response.data.seekerId;
+        console.log("Seeker ID:", seekerId);
+        localStorage.setItem("SeekerId", seekerId); 
+        navigate('/jobseeker/home');
     }
     } catch (error) {
       console.error('Error creating profile:', error);

@@ -59,12 +59,13 @@ export default function SignUpForm() {
         setSuccessMessage(response.data.message); 
 
         const userId = response.data.userId;
-
-        if (userType === 'jobseeker') {
-          navigate(`/signup/jobseeker/profile/${userId}`);
-        } else if (userType === 'employer') {
-          navigate(`/signup/employer/profile/${userId}`);
-        }
+        
+        navigate(`/login`)
+        // if (userType === 'jobseeker') {
+        //   navigate(`/signup/jobseeker/profile/${userId}`);
+        // } else if (userType === 'employer') {
+        //   navigate(`/signup/employer/profile/${userId}`);
+        // }
       }
     } catch (error) {
 
@@ -149,7 +150,7 @@ export default function SignUpForm() {
 
                 {/* Submit Button */}
                 <div className='col-12' style={{ display: 'flex', justifyContent: 'center' }}>
-                  <MDBBtn type='submit' style={{ marginTop: '20px', backgroundColor: '#0A3D62',borderRadius: '40px' }}>Create My Account</MDBBtn>
+                  <MDBBtn type='submit' style={{ marginTop: '20px', backgroundColor: '#0A3D62',borderRadius: '40px',fontSize:'14px' }}>Create My Account</MDBBtn>
                 </div>
 
                 <MDBRow className='mt-3'>

@@ -14,6 +14,7 @@ import JobSeekerSearch from "./pages/JobSeekerSearch";
 import { BrowserRouter,Routes,Route } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { JobPostsForSeeker } from "./pages/JobPostsForSeeker";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   return (
@@ -29,7 +30,7 @@ function App() {
         <Route path='/employer' element={<EmployerHome/>}/>
         <Route path='/signup/jobseeker/profile/:userId' element={<JobseekerProfile/>}/>
         <Route path='/signup/employer/profile/:userId' element={<EmployerProfile/>}/>
-
+        <Route path="reset-password" element={<ResetPassword/>}/>
         <Route path='/employer/jobpost/*' element={<JobPost/>}>
           <Route path='createpost' element={<CreatePostForm/>}/>
           <Route path='posts/:employerId' element={<JobPostsByEmployer/>}/>

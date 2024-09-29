@@ -2,22 +2,30 @@ import React from 'react';
 import {
   MDBFooter,
   MDBContainer,
-  MDBCol,
-  MDBRow,
   MDBIcon,
   MDBBtn
 } from 'mdb-react-ui-kit';
 import { Link } from 'react-router-dom';
 
-export default function App() {
+export default function Footer() {
+  const buttonStyle = {
+    width: '40px',
+    height: '40px', 
+    borderRadius: '50%', 
+    display: 'flex', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    padding: 0, 
+  };
+
   return (
     <MDBFooter className='bg-light text-center text-white'>
-      <MDBContainer className='p-4 pb-0' style={{marginTop:"150px"}}>
-        <section className='mb-4'>
+      <MDBContainer className='p-4 pb-0' style={{ marginTop: "150px" }}>
+        <section className='mb-4' style={{ display: 'flex', justifyContent: 'center' }}>
           <MDBBtn
             floating
             className='m-1'
-            style={{ backgroundColor: '#3b5998' }}
+            style={{ ...buttonStyle, backgroundColor: '#3b5998' }}
             href='#!'
             role='button'
           >
@@ -27,7 +35,7 @@ export default function App() {
           <MDBBtn
             floating
             className='m-1'
-            style={{ backgroundColor: '#55acee' }}
+            style={{ ...buttonStyle, backgroundColor: '#55acee' }}
             href='#!'
             role='button'
           >
@@ -37,16 +45,17 @@ export default function App() {
           <MDBBtn
             floating
             className='m-1'
-            style={{ backgroundColor: '#dd4b39' }}
+            style={{ ...buttonStyle, backgroundColor: '#dd4b39' }}
             href='#!'
             role='button'
           >
             <MDBIcon fab icon='google' />
           </MDBBtn>
+
           <MDBBtn
             floating
             className='m-1'
-            style={{ backgroundColor: '#ac2bac' }}
+            style={{ ...buttonStyle, backgroundColor: '#ac2bac' }}
             href='#!'
             role='button'
           >
@@ -56,7 +65,7 @@ export default function App() {
           <MDBBtn
             floating
             className='m-1'
-            style={{ backgroundColor: '#0082ca' }}
+            style={{ ...buttonStyle, backgroundColor: '#0082ca' }}
             href='#!'
             role='button'
           >
@@ -66,7 +75,7 @@ export default function App() {
           <MDBBtn
             floating
             className='m-1'
-            style={{ backgroundColor: '#333333' }}
+            style={{ ...buttonStyle, backgroundColor: '#333333' }}
             href='#!'
             role='button'
           >
@@ -76,7 +85,7 @@ export default function App() {
       </MDBContainer>
 
       <div className='text-center p-3' style={{ backgroundColor: 'rgba(10, 61, 98, 0.7)' }}>
-        © 2024 Copyright:
+        © 2024 Copyright : 
         <Link className='text-white' to="/">
           TalentTrail.com
         </Link>

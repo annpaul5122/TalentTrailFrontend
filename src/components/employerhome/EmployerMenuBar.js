@@ -12,7 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import Logo from '../../assets/images/logo-trail1.png';
 import Icon from '../../assets/images/profile.png';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 
 const pages = ['Job Post','Saved Talents'];
 const settings = ['View Profile', 'Logout'];
@@ -20,7 +20,8 @@ const settings = ['View Profile', 'Logout'];
 function EmployerMenuBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-
+  
+  const navigate=useNavigate();
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -36,6 +37,14 @@ function EmployerMenuBar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const handleMenuItemClick = (page) => {
+    handleCloseNavMenu();
+    if(page==='Job Post')
+    {
+      navigate('/employer/jobpost');
+    }
+  }
 
   return (
     <AppBar position="static" sx={{ backgroundColor: '#f5f5f5', color: 'black' }}>
@@ -95,7 +104,7 @@ function EmployerMenuBar() {
                 sx={{ marginTop: '15px', fontFamily: 'Poppins', borderRadius: '25px' }} // Position the dropdown below the AppBar
               >
                 {pages.map((page) => (
-                  <MenuItem key={page} onClick={handleCloseNavMenu}>
+                  <MenuItem key={page} onClick={()=>handleMenuItemClick(page)}>
                     <Typography textAlign="center">{page}</Typography>
                   </MenuItem>
                 ))}

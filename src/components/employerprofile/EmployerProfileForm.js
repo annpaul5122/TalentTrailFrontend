@@ -118,7 +118,10 @@ export default function EmployerProfileForm({ userId }) {
       );
       console.log('Profile created:', response.data);
       if (response.status === 200) {
-          navigate('/login');
+        const employerId = response.data.employerId;
+        console.log("Employer ID:", employerId);
+        localStorage.setItem("employerId", employerId);
+          navigate('/employer');
       }
     } catch (error) {
       console.error('Error creating profile:', error);

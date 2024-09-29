@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   MDBContainer,
   MDBRow,
@@ -10,6 +10,8 @@ import {
   MDBValidation,
   MDBValidationItem
 } from 'mdb-react-ui-kit';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const EmploymentType = {
   FullTime: 0,
@@ -18,17 +20,35 @@ const EmploymentType = {
   Internship: 3,
 };
 
-const CreatePostForm = ({ handleSubmit }) => {
+const CreatePostForm = () => {
   const [formValue, setFormValue] = useState({
     jobTitle: '',
     jobDescription: '',
     jobRequirements: '',
     jobLocation: '',
     salaryRange: '',
-    employmentType: '', 
+    employmentType: '',
     industry: '',
     applicationDeadline: '',
+    companyId: '',  // Add companyId field for the selected company
   });
+
+  const [companies, setCompanies] = useState([]);  // Store the company list
+  const employerId = localStorage.getItem("EmployerId");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Fetch the company details from the endpoint on component mount
+    const fetchCompanies = async () => {
+      try {
+        const response = await axios.get('https://localhost:7119/api/CompanyDetails');  // Adjust URL based on your route
+        setCompanies(response.data.$values);
+      } catch (error) {
+        console.error('Error fetching companies:', error);
+      }
+    };
+    fetchCompanies();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,8 +59,36 @@ const CreatePostForm = ({ handleSubmit }) => {
     setFormValue({ ...formValue, employmentType: parseInt(e.target.value) });
   };
 
+  const handleCompanyChange = (e) => {
+    setFormValue({ ...formValue, companyId: parseInt(e.target.value) });
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('https://localhost:7119/api/JobPosts', {
+        EmployerId : employerId,
+        CompanyId : formValue.companyId,
+        JobTitle : formValue.jobTitle,
+        JobDescription :formValue.jobDescription,
+        JobRequirements :formValue.jobRequirements,
+        JobLocation: formValue.jobLocation,
+        SalaryRange: formValue.salaryRange,
+        EmploymentType:formValue.employmentType ,
+        Industry: formValue.industry,
+        ApplicationDeadline: formValue.applicationDeadline
+      });
+      alert('Job post created successfully!');
+      navigate(`/employer/jobpost/posts/${employerId}`);
+    } catch (error) {
+      console.error('Error creating job post:', error);
+    }
+
+  };
+
   return (
-    <MDBContainer fluid style={{ paddingBottom: '50px'}}>
+    <MDBContainer fluid style={{ paddingBottom: '50px' }}>
       <MDBRow className="d-flex justify-content-center align-items-center vh-100">
         <MDBCol md="6">
           <MDBCard className="mb-5">
@@ -119,7 +167,7 @@ const CreatePostForm = ({ handleSubmit }) => {
                       <option value="">Select Employment Type</option>
                       {Object.keys(EmploymentType).map((key) => (
                         <option key={key} value={EmploymentType[key]}>
-                          {key.replace(/([A-Z])/g, ' $1').trim()} {/* Formats enum names */}
+                          {key.replace(/([A-Z])/g, ' $1').trim()}
                         </option>
                       ))}
                     </select>
@@ -149,8 +197,32 @@ const CreatePostForm = ({ handleSubmit }) => {
                   />
                 </MDBValidationItem>
 
+                {/* Company Dropdown */}
+                <MDBValidationItem tooltip className="mb-3" feedback="Please select a company." invalid>
+                  <div className="position-relative">
+                    <select
+                      name="companyId"
+                      value={formValue.companyId}
+                      onChange={handleCompanyChange}
+                      className="form-control"
+                      required
+                    >
+                      <option value="">Select Company</option>
+                      {companies.map((company) => (
+                        <option key={company.companyId} value={company.companyId}>
+                          {company.companyName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </MDBValidationItem>
+
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <MDBBtn type="submit" className="mt-3" style={{ backgroundColor: '#0A3D62', margin: "20px auto", padding: "10px 20px", borderRadius: "25px", fontSize: "14px", width: "30%" }}>
+                  <MDBBtn
+                    type="submit"
+                    className="mt-3"
+                    style={{ backgroundColor: '#0A3D62', margin: "20px auto", padding: "10px 20px", borderRadius: "25px", fontSize: "14px", width: "30%" }}
+                  >
                     Create
                   </MDBBtn>
                 </div>

@@ -11,6 +11,8 @@ import CreatePostForm from "./components/jobpost/CreatePostForm";
 import JobPostsByEmployer from "./components/jobpost/JobPostsByEmployer";
 import ViewApplicants from "./components/jobpost/ViewApplicants";
 import JobSeekerSearch from "./pages/JobSeekerSearch";
+import JobApplication from "./pages/JobApplication";
+import ApplicationForm from './pages/ApplicationForm';
 import { BrowserRouter,Routes,Route } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { JobPostsForSeeker } from "./pages/JobPostsForSeeker";
@@ -40,6 +42,9 @@ function App() {
             <Route path='home' element={<JobseekerHome/>}/>
             <Route path="jobposts" element={<JobPostsForSeeker/>}/>
         </Route>
+
+        <Route path='/jobseeker/applications/:seekerId' element={<JobApplication/>}/> 
+        <Route path='/jobseeker/applications/apply/:jobId' element={<ApplicationForm/>}/>
 
       </Routes>
     </BrowserRouter>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaPlus, FaPencilAlt,FaSearch, FaBell, FaUser, FaBook, FaFileVideo, FaVolleyballBall, FaBlog, FaLeaf } from "react-icons/fa";
+import { FaPlus, FaUser,FaHome,  FaBriefcase } from "react-icons/fa";
 import '../../styles/jobpost/PostSideNavBar.css';
 import Logo from '../../assets/images/logo-trail1.png'
 import {Link} from 'react-router-dom'
@@ -11,6 +11,9 @@ const PostSideBar = () => {
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
+
+  const employerId = localStorage.getItem("EmployerId");
+  console.log("emp:",employerId);
 
   return (
     <div className={`wrapper ${isCollapsed ? "collapsed" : ""}`}>
@@ -37,12 +40,13 @@ const PostSideBar = () => {
               <span className="title">Create Post</span>
             </a>
           </li>
-          <li><a href="#">
-            <FaPencilAlt /> <span className="title">Job Post</span>
-          </a></li>
-          <li><a href="#">
-            <FaFileVideo /> <span className="title">Movies</span>
-          </a></li>
+          <li><Link to={`/employer`}>
+            <FaHome /> <span className="title">Home</span>
+          </Link></li>
+          <li><Link to={`/employer/jobpost/posts/${employerId}`}>
+            <FaBriefcase /> <span className="title">Job Post</span>
+          </Link></li>
+          
         </ul>
       </div>
 

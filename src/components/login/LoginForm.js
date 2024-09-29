@@ -67,13 +67,44 @@ export default function LoginForm() {
         console.log("User Role:", userRole);
     
         setShowAlert(true);
-        setTimeout(() => {
+        setTimeout(async () => {
           setShowAlert(false);
           if (userRole === 'Employer') {
-            nav("/employer");  
-          } else if (userRole === 'Job Seeker') {
-            nav("/jobseeker"); 
-          } else {
+            try {
+              const employerProfileResponse = await axios.get(`https://localhost:7119/api/Employers/CheckProfile/${userId}`);
+              console.log(employerProfileResponse);
+              if (employerProfileResponse.data.exists) {
+                const employerId = employerProfileResponse.data.employerId;
+                console.log("Employer ID:", employerId);
+                localStorage.setItem("EmployerId", employerId); 
+                
+                nav("/employer"); 
+              } else {
+                nav(`/signup/employer/profile/${userId}`);
+              }
+            } catch (error) {
+              console.error("Error checking employer profile:", error);
+            }
+          } 
+          else if (userRole === 'Job Seeker') {
+            try {
+              const seekerProfileResponse = await axios.get(`https://localhost:7119/api/JobSeekers/CheckProfile/${userId}`);
+              
+              if (seekerProfileResponse.data.exists) {
+                const seekerId = seekerProfileResponse.data.seekerId;
+                console.log("Seeker ID:", seekerId);
+                localStorage.setItem("SeekerId", seekerId); 
+                
+                nav("/jobseeker/home"); 
+              } else {
+                nav(`/signup/jobseeker/profile/${userId}`);
+              }
+            } catch (error) {
+              console.error("Error checking seeker profile:", error);
+            }
+            
+          } 
+          else {
             nav("/not-authorized"); 
           }
         }, 2000);
@@ -139,7 +170,7 @@ export default function LoginForm() {
 
                 {/* Submit Button */}
                 <div className='col-12' style={{ display: 'flex', justifyContent: 'center' }}>
-                  <MDBBtn type='submit' style={{ marginTop: '20px', backgroundColor: '#0A3D62',  borderRadius: '40px' }}>Login</MDBBtn>
+                  <MDBBtn type='submit' style={{ marginTop: '20px', backgroundColor: '#0A3D62',  borderRadius: '40px',fontSize:"14px" }}>Login</MDBBtn>
                 </div>
 
                 {showAlert && <div className="custom-alert">Login successful!</div>}

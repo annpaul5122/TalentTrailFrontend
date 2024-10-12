@@ -8,7 +8,7 @@ export default function Resumetip() {
         <MDBCol md="12" className="p-0 d-flex justify-content-center align-items-center">
           <iframe
             width="100%"
-            height="315px" // Adjusted height
+            height="315px"
             src="https://www.youtube.com/embed/KD_oQk0zxsU"
             title="7 Resume Tips to Get You Hired"
             frameBorder="0"

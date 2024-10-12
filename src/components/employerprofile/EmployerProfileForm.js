@@ -41,11 +41,16 @@ export default function EmployerProfileForm({ userId }) {
   const [filteredCompanies, setFilteredCompanies] = useState([]);
   const [isCompanySelected, setIsCompanySelected] = useState(false);
   const [isJobPositionDropdownOpen, setIsJobPositionDropdownOpen] = useState(false);
+  const token = localStorage.getItem("Auth-Token");
 
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const response = await axios.get('https://localhost:7119/api/CompanyDetails');
+        const response = await axios.get('https://localhost:7119/api/CompanyDetails',{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const data = response.data.$values;
         setCompanies(Array.isArray(data) ? data : []);
       } catch (error) {
@@ -55,7 +60,11 @@ export default function EmployerProfileForm({ userId }) {
 
     const fetchUserDetails = async () => {
       try {
-        const response = await axios.get(`https://localhost:7119/api/Users/details/${userId}`);
+        const response = await axios.get(`https://localhost:7119/api/Users/details/${userId}`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const userData = response.data;
         setFormValue((prev) => ({
           ...prev,
@@ -114,26 +123,28 @@ export default function EmployerProfileForm({ userId }) {
         CompanyDescription: formValue.companyDescription,
         CompanyLogo: formValue.companyLogo,
         CompanyAddress: formValue.companyAddress,
-        Industry: formValue.industry}
+        Industry: formValue.industry},{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log('Profile created:', response.data);
       if (response.status === 200) {
         const employerId = response.data.employerId;
         console.log("Employer ID:", employerId);
-        localStorage.setItem("employerId", employerId);
+        localStorage.setItem("EmployerId", employerId);
           navigate('/employer');
       }
     } catch (error) {
-      console.error('Error creating profile:', error);
+      alert('Error creating profile:', error);
     }
   };
 
-  // Toggle job position dropdown visibility
   const toggleJobPositionDropdown = () => {
     setIsJobPositionDropdownOpen((prev) => !prev);
   };
 
-  // Handle job position selection
   const handleJobPositionSelect = (position) => {
     setFormValue({ ...formValue, jobPosition: position });
     setIsJobPositionDropdownOpen(false);
@@ -148,7 +159,6 @@ export default function EmployerProfileForm({ userId }) {
               <h3 style={{ marginTop: "10px", marginBottom: "30px" }}>Create Profile</h3>
               <MDBValidation onSubmit={handleSubmit}>
                 
-                {/* User Details */}
                 <MDBValidationItem tooltip className="mb-3" feedback="Please provide your first name." invalid>
                   <MDBInput name="firstName" value={formValue.firstName} label="First Name" readOnly required />
                 </MDBValidationItem>
@@ -161,7 +171,6 @@ export default function EmployerProfileForm({ userId }) {
                   <MDBInput name="email" value={formValue.email} label="Email" readOnly required />
                 </MDBValidationItem>
 
-                {/* Company Name Input with Dropdown */}
                 <MDBValidationItem tooltip className="mb-3" feedback="Please provide a company name." invalid>
                   <div className="position-relative">
                     <MDBInput
@@ -186,7 +195,6 @@ export default function EmployerProfileForm({ userId }) {
                   </div>
                 </MDBValidationItem>
 
-                {/* Other Fields */}
                 <MDBValidationItem tooltip className="mb-3" feedback="Please provide a company website." invalid>
                   <MDBInput
                     name="companyWebUrl"
@@ -242,7 +250,6 @@ export default function EmployerProfileForm({ userId }) {
                   />
                 </MDBValidationItem>
 
-                {/* Job Position Dropdown */}
                 <MDBValidationItem tooltip className="mb-3" feedback="Please select a job position." invalid>
                   <div className="position-relative">
                     <MDBInput
@@ -267,7 +274,6 @@ export default function EmployerProfileForm({ userId }) {
                   </div>
                 </MDBValidationItem>
 
-                {/* Is Third Party Checkbox */}
                 <MDBCheckbox
                   name="isThirdParty"
                   checked={formValue.isThirdParty}

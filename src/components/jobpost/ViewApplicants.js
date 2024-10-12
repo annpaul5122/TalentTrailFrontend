@@ -3,18 +3,24 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
 import { Button, Modal, Form } from 'react-bootstrap';
+import noResultsImage from '../../assets/images/No Results.svg';
 
 export default function ViewApplicants() {
   const { jobId } = useParams(); 
   const [applicants, setApplicants] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedApplicant, setSelectedApplicant] = useState(null);
-  const [newStatus, setNewStatus] = useState(''); // State for the new status
+  const [newStatus, setNewStatus] = useState(''); 
+  const token = localStorage.getItem("Auth-Token");
 
   useEffect(() => {
     const fetchApplicants = async () => {
       try {
-        const response = await axios.get(`https://localhost:7119/api/JobApplications/GetApplicationByJobPost/${jobId}`);
+        const response = await axios.get(`https://localhost:7119/api/JobApplications/GetApplicationByJobPost/${jobId}`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setApplicants(response.data.$values);  
       } catch (error) {
         console.error('Error fetching applicants:', error);
@@ -51,7 +57,7 @@ export default function ViewApplicants() {
 
   const handleClose = () => setShowModal(false);
 
-  // Enum for application statuses
+  
   const ApplicationStatus = {
     Applied: 0,
     InterviewScheduled: 1,
@@ -61,7 +67,6 @@ export default function ViewApplicants() {
     Withdrawn: 5,
   };
 
-  // Function to handle status update
   const handleStatusUpdate = async () => {
     if (!newStatus || !selectedApplicant) return;
 
@@ -71,9 +76,14 @@ export default function ViewApplicants() {
     };
 
     try {
-      const response = await axios.put('https://localhost:7119/api/JobPosts/UpdateApplicationStatus', updateDto);
+      const response = await axios.put('https://localhost:7119/api/JobPosts/UpdateApplicationStatus', updateDto,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       alert('Application status updated successfully.');
       setShowModal(false); 
+      window.location.reload();
     } catch (error) {
       console.error('Error updating status:', error);
       alert('Failed to update status.');
@@ -82,6 +92,13 @@ export default function ViewApplicants() {
 
   return (
     <div>
+       {applicants.length === 0 ? (
+        <div className="no-results-container text-center">
+          <img src={noResultsImage} alt="No results found" className="no-results-image" style={{ width: '400px', height: 'auto' }} />
+          <h4 style={{ color: "#0A3D62", textAlign: "center", fontWeight: "bold" }}>Oops.. No records found</h4>
+        </div>
+      ) : (
+        <>
       <h3 style={{ marginBottom: '50px' }}>Applicants</h3>
       <MDBTable align='middle'>
         <MDBTableHead>
@@ -120,8 +137,9 @@ export default function ViewApplicants() {
           ))}
         </MDBTableBody>
       </MDBTable>
+      </>
+      )}
 
-      {/* Modal for viewing and updating applicant status */}
       <Modal show={showModal} onHide={handleClose} size='lg'>
         <Modal.Header closeButton>
           <Modal.Title>Applicant Details</Modal.Title>
@@ -169,7 +187,7 @@ export default function ViewApplicants() {
                 <label className='form-label'>Application Status</label>
                 <Form.Select 
                   value={newStatus} 
-                  onChange={(e) => setNewStatus(e.target.value)} // Handle status selection
+                  onChange={(e) => setNewStatus(e.target.value)}
                   aria-label="Select Application Status">
                   <option value="Applied">Applied</option>
                   <option value="InterviewScheduled">Interview Scheduled</option>
@@ -203,7 +221,7 @@ export default function ViewApplicants() {
               fontSize: '14px', 
               marginRight: '12px' 
             }}
-            onClick={handleStatusUpdate} // Update status when clicked
+            onClick={handleStatusUpdate}
           >
             Update Status
           </Button>

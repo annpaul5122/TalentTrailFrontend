@@ -61,11 +61,6 @@ export default function SignUpForm() {
         const userId = response.data.userId;
         
         navigate(`/login`)
-        // if (userType === 'jobseeker') {
-        //   navigate(`/signup/jobseeker/profile/${userId}`);
-        // } else if (userType === 'employer') {
-        //   navigate(`/signup/employer/profile/${userId}`);
-        // }
       }
     } catch (error) {
 
@@ -80,17 +75,16 @@ export default function SignUpForm() {
   return (
     <MDBContainer fluid className="d-flex justify-content-center align-items-center vh-100">
       <MDBRow className="w-75" style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', borderRadius: '15px', overflow: 'hidden', backgroundColor: '#fff' }}>
-        {/* Left Side - Illustration */}
+
         <MDBCol md="6" className="d-none d-md-flex justify-content-center align-items-center" style={{ backgroundColor: 'rgba(10, 61, 98, 0.1)' }}>
           <img src={Illustration} alt="Illustration" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
         </MDBCol>
 
-        {/* Right Side - Form */}
         <MDBCol md="6" lg="6" className="p-5">
           <MDBCard style={{ border: 'none' }}>
             <MDBCardBody>
               <MDBValidation className='row g-3' onSubmit={handleSubmit}>
-                {/* First Name */}
+
                 <MDBValidationItem tooltip className='col-md-6' feedback='Please provide a first name.' invalid>
                   <MDBInput
                     value={formValue.fname}
@@ -102,7 +96,6 @@ export default function SignUpForm() {
                   />
                 </MDBValidationItem>
 
-                {/* Last Name */}
                 <MDBValidationItem tooltip className='col-md-6' feedback='Please provide a last name.' invalid>
                   <MDBInput 
                     value={formValue.lname}
@@ -114,7 +107,6 @@ export default function SignUpForm() {
                   />
                 </MDBValidationItem>
 
-                {/* Email */}
                 <MDBValidationItem tooltip feedback='Please provide a valid email.' invalid className='col-md-12' style={{ marginTop: '20px' }}>
                   <MDBInputGroup textBefore={<MDBIcon fas icon="envelope" />}>
                     <input
@@ -130,7 +122,6 @@ export default function SignUpForm() {
                   </MDBInputGroup>
                 </MDBValidationItem>
 
-                {/* Password */}
                 <MDBValidationItem tooltip feedback='Please provide a valid password.' invalid className='col-md-12' style={{ marginTop: '20px' }}>
                   <MDBInput
                     value={formValue.password}
@@ -143,12 +134,10 @@ export default function SignUpForm() {
                   />
                 </MDBValidationItem>
 
-                {/* Terms & Conditions Checkbox */}
                 <MDBValidationItem tooltip className='col-12' feedback='You must agree before submitting.' invalid style={{ marginTop: '20px' }}>
                   <MDBCheckbox label='Agree to terms and conditions' id='invalidCheck' required />
                 </MDBValidationItem>
 
-                {/* Submit Button */}
                 <div className='col-12' style={{ display: 'flex', justifyContent: 'center' }}>
                   <MDBBtn type='submit' style={{ marginTop: '20px', backgroundColor: '#0A3D62',borderRadius: '40px',fontSize:'14px' }}>Create My Account</MDBBtn>
                 </div>

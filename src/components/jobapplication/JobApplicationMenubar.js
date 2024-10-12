@@ -33,12 +33,26 @@ function JobApplicationMenubar() {
     setAnchorElUser(null);
   };
 
+  const handleDropDownClick = (settings) => {
+    handleCloseUserMenu();
+    if(settings === 'View Profile')
+    {
+      navigate('/jobseeker/view-profile');
+    }
+    if(settings==='Logout')
+      {
+        localStorage.removeItem("Auth-Token");
+        navigate('/');
+        window.location.reload();
+      }
+  }
+
 
   return (
     <AppBar position="static" sx={{ backgroundColor: '#f5f5f5', color: 'black' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-          {/* Logo Image that links to Home */}
+
           <Link to="/jobseeker/home">
             <img
               src={Logo}
@@ -47,8 +61,6 @@ function JobApplicationMenubar() {
             />
           </Link>
 
-
-          {/* Right Side Avatar with Dropdown */}
           <Box sx={{ flexGrow: 0 }}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0}}>
                 <Avatar alt="Profile Picture" src={Icon}/>
@@ -70,7 +82,7 @@ function JobApplicationMenubar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting} onClick={()=>handleDropDownClick(setting)}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}

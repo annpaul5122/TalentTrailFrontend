@@ -1,42 +1,54 @@
 import React, { useEffect, useState } from "react";
 import "../styles/signup/ResetPassword.css";
 import axios from "axios";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
-
-  const location = useLocation(); // Access the current URL
-  const [token, setToken] = useState(null); // State to hold the token value
-  const nav = useNavigate();
+  const [confirmpwd, setConfirm]= useState("");
+  const [token, setToken] = useState(null);
+  
+  const location = useLocation();
   useEffect(() => {
-    // Use URLSearchParams to get the token from the query string
+  
     const searchParams = new URLSearchParams(location.search);
-    const tokenParam = searchParams.get("token"); // Get the 'token' query param
-    setToken(tokenParam); // Store the token in state
+    const tokenParam = searchParams.get("token"); 
+    setToken(tokenParam); 
   }, [location.search]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!password) {
-      setMessage("Please enter your new password");
+    if (!password || !confirmpwd) {
+      alert("Please fill in all fields");
       return;
     }
 
-    // Simulating a POST request to reset the password
+    if (password !== confirmpwd) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    if (!token) {
+      alert("Token is missing");
+      return;
+    }
+
     try {
-      const res = axios.post(
+      const res = await axios.post(
         "https://localhost:7119/api/Users/reset-password",
         {
-            token,
-            password
+            token: token,
+            newPassword: password,
+            confirmPassword: confirmpwd
         }
       );
-      setMessage("Password reset successful!");
+      if(res.status===200)
+      {
+        alert("Reset successful. Close this tab and continue.")
+      }
     } catch (error) {
-      setMessage("Error resetting password. Please try again.");
+      alert("Error resetting password. Please try again.");
     }
   };
 
@@ -54,12 +66,20 @@ const ResetPassword = () => {
             placeholder="Enter your new password"
             required
           />
+          <label htmlFor="confirmpwd">Confirm Password</label>
+          <input
+            type="password"
+            id="confirmpwd"
+            value={confirmpwd}
+            onChange={(e) => setConfirm(e.target.value)}
+            placeholder="Confirm your new password"
+            required
+          />
         </div>
-        <button type="submit" className="submit-button">
+        <button type="submit" className="submit-button" style={{backgroundColor:"#0A3D64"}}>
           Reset Password
         </button>
       </form>
-      {message && <p className="message">{message}</p>}
     </div>
   );
 };

@@ -30,18 +30,23 @@ const CreatePostForm = () => {
     employmentType: '',
     industry: '',
     applicationDeadline: '',
-    companyId: '',  // Add companyId field for the selected company
+    companyId: '', 
   });
 
-  const [companies, setCompanies] = useState([]);  // Store the company list
+  const [companies, setCompanies] = useState([]); 
   const employerId = localStorage.getItem("EmployerId");
   const navigate = useNavigate();
+  const token = localStorage.getItem("Auth-Token");
 
   useEffect(() => {
-    // Fetch the company details from the endpoint on component mount
+
     const fetchCompanies = async () => {
       try {
-        const response = await axios.get('https://localhost:7119/api/CompanyDetails');  // Adjust URL based on your route
+        const response = await axios.get('https://localhost:7119/api/CompanyDetails',{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }); 
         setCompanies(response.data.$values);
       } catch (error) {
         console.error('Error fetching companies:', error);
@@ -63,7 +68,6 @@ const CreatePostForm = () => {
     setFormValue({ ...formValue, companyId: parseInt(e.target.value) });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -78,11 +82,15 @@ const CreatePostForm = () => {
         EmploymentType:formValue.employmentType ,
         Industry: formValue.industry,
         ApplicationDeadline: formValue.applicationDeadline
+      },{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       alert('Job post created successfully!');
       navigate(`/employer/jobpost/posts/${employerId}`);
     } catch (error) {
-      console.error('Error creating job post:', error);
+      alert('Error creating job post:', error);
     }
 
   };
@@ -96,7 +104,7 @@ const CreatePostForm = () => {
               <h3 style={{ marginTop: "10px", marginBottom: "30px" }}>Create Job Post</h3>
               <MDBValidation onSubmit={handleSubmit}>
                 
-                {/* Job Title */}
+                
                 <MDBValidationItem tooltip className="mb-3" feedback="Please provide a job title." invalid>
                   <MDBInput
                     name="jobTitle"
@@ -107,7 +115,7 @@ const CreatePostForm = () => {
                   />
                 </MDBValidationItem>
 
-                {/* Job Description */}
+              
                 <MDBValidationItem tooltip className="mb-3" feedback="Please provide a job description." invalid>
                   <MDBInput
                     name="jobDescription"
@@ -120,7 +128,7 @@ const CreatePostForm = () => {
                   />
                 </MDBValidationItem>
 
-                {/* Job Requirements */}
+              
                 <MDBValidationItem tooltip className="mb-3" feedback="Please provide job requirements." invalid>
                   <MDBInput
                     name="jobRequirements"
@@ -132,7 +140,7 @@ const CreatePostForm = () => {
                   />
                 </MDBValidationItem>
 
-                {/* Job Location */}
+               
                 <MDBValidationItem tooltip className="mb-3" feedback="Please provide a job location." invalid>
                   <MDBInput
                     name="jobLocation"
@@ -143,7 +151,7 @@ const CreatePostForm = () => {
                   />
                 </MDBValidationItem>
 
-                {/* Salary Range */}
+              
                 <MDBValidationItem tooltip className="mb-3" feedback="Please provide a salary range." invalid>
                   <MDBInput
                     name="salaryRange"
@@ -154,7 +162,7 @@ const CreatePostForm = () => {
                   />
                 </MDBValidationItem>
 
-                {/* Employment Type Dropdown */}
+           
                 <MDBValidationItem tooltip className="mb-3" feedback="Please select an employment type." invalid>
                   <div className="position-relative">
                     <select
@@ -174,7 +182,7 @@ const CreatePostForm = () => {
                   </div>
                 </MDBValidationItem>
 
-                {/* Industry */}
+            
                 <MDBValidationItem tooltip className="mb-3" feedback="Please provide an industry." invalid>
                   <MDBInput
                     name="industry"
@@ -185,7 +193,6 @@ const CreatePostForm = () => {
                   />
                 </MDBValidationItem>
 
-                {/* Application Deadline */}
                 <MDBValidationItem tooltip className="mb-3" feedback="Please provide an application deadline." invalid>
                   <MDBInput
                     name="applicationDeadline"
@@ -197,7 +204,7 @@ const CreatePostForm = () => {
                   />
                 </MDBValidationItem>
 
-                {/* Company Dropdown */}
+        
                 <MDBValidationItem tooltip className="mb-3" feedback="Please select a company." invalid>
                   <div className="position-relative">
                     <select

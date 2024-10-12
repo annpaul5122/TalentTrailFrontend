@@ -3,6 +3,7 @@ import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody } from 'mdb-reac
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Modal, Button, Form } from 'react-bootstrap';
+import noResultsImage from '../../assets/images/No Results.svg';
 
 const DisplayApplication = () => {
   const [jobApplications, setJobApplications] = useState([]);
@@ -12,18 +13,27 @@ const DisplayApplication = () => {
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [resumes, setResumes] = useState([]);
   const [formData, setFormData] = useState({ coverLetter: '', resumeId: '' });
-  const [isEditing, setIsEditing] = useState(false); // Track if in edit mode
+  const [isEditing, setIsEditing] = useState(false); 
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false); 
+  const token = localStorage.getItem("Auth-Token");
 
   useEffect(() => {
     const fetchApplications = async () => {
       try {
-        const response = await axios.get(`https://localhost:7119/api/JobApplications/GetApplicationByJobSeeker/${seekerId}`);
+        const response = await axios.get(`https://localhost:7119/api/JobApplications/GetApplicationByJobSeeker/${seekerId}`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const applications = response.data.$values;
 
         const applicationsWithJobTitles = await Promise.all(
           applications.map(async (application) => {
-            const jobResponse = await axios.get(`https://localhost:7119/api/JobPosts/jobId/${application.jobId}`);
+            const jobResponse = await axios.get(`https://localhost:7119/api/JobPosts/jobId/${application.jobId}`,{
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
             return {
               ...application,
               JobTitle: jobResponse.data.jobTitle,
@@ -45,7 +55,11 @@ const DisplayApplication = () => {
 
     const fetchResumes = async () => {
       try {
-        const response = await axios.get(`https://localhost:7119/api/Resumes/${seekerId}`);
+        const response = await axios.get(`https://localhost:7119/api/Resumes/${seekerId}`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setResumes(response.data.$values);
       } catch (error) {
         console.error('Error fetching resumes:', error);
@@ -63,32 +77,37 @@ const DisplayApplication = () => {
       resumeId: application.resumeId || '',
     });
     setShowModal(true);
-    setIsEditing(false); // Reset editing state when opening modal
+    setIsEditing(false); 
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedApplication(null);
     setFormData({ coverLetter: '', resumeId: '' });
-    setIsEditing(false); // Reset editing state on close
+    setIsEditing(false);
   };
 
   const handleDeleteClick = (application) => {
-    setSelectedApplication(application); // Set the selected application for deletion
-    setIsConfirmDeleteOpen(true); // Show confirmation modal
+    setSelectedApplication(application); 
+    setIsConfirmDeleteOpen(true); 
   };
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`https://localhost:7119/api/JobApplications/${selectedApplication.applicationId}`);
+      await axios.delete(`https://localhost:7119/api/JobApplications/${selectedApplication.applicationId}`,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setJobApplications((prevApplications) =>
         prevApplications.filter((app) => app.applicationId !== selectedApplication.applicationId)
-      ); // Remove deleted application from the state
-      console.log("Delete successful");
+      ); 
+      alert("Delete successful");
+      window.location.reload();
     } catch (error) {
-      console.error('Error deleting application:', error);
+      alert('Error deleting application:', error);
     }
-    setSelectedApplication(null); // Clear the selected application
+    setSelectedApplication(null); 
   };
 
 
@@ -101,11 +120,16 @@ const DisplayApplication = () => {
     };
 
     try {
-      await axios.put(`https://localhost:7119/api/JobApplications`, applyJobDto);
-      console.log("Update successful");
+      await axios.put(`https://localhost:7119/api/JobApplications`, applyJobDto,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      alert("Update successful");
       handleCloseModal();
+      window.location.reload();
     } catch (error) {
-      console.error('Error updating application:', error);
+      alert('Error updating application:', error);
     }
   };
 
@@ -120,6 +144,13 @@ const DisplayApplication = () => {
 
   return (
     <div className="container my-5 p-4 bg-light rounded shadow">
+      {jobApplications.length === 0 ? (
+        <div className="no-results-container text-center">
+          <img src={noResultsImage} alt="No results found" className="no-results-image" style={{ width: '400px', height: 'auto' }} />
+          <h4 style={{ color: "#0A3D62", textAlign: "center", fontWeight: "bold" }}>Oops.. No records found</h4>
+        </div>
+      ) : (
+        <>
       <h3 className="mb-4 text-center">Your Job Applications</h3>
       <MDBTable align='middle'>
         <MDBTableHead>
@@ -157,8 +188,9 @@ const DisplayApplication = () => {
           ))}
         </MDBTableBody>
       </MDBTable>
+      </>
+      )}
 
-      {/* Modal for viewing detailed information */}
       {selectedApplication && (
         <Modal show={showModal} onHide={handleCloseModal} centered>
           <Modal.Header closeButton>

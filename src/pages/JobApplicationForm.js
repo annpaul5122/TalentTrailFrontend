@@ -12,7 +12,7 @@ import {
   MDBValidationItem,
   MDBTextArea
 } from 'mdb-react-ui-kit';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 
 const JobApplicationForm = () => {
   const { jobId } = useParams(); 
@@ -22,11 +22,17 @@ const JobApplicationForm = () => {
   });
   const [resumes, setResumes] = useState([]);
   const seekerId = localStorage.getItem("SeekerId");
+  const token = localStorage.getItem("Auth-Token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchResumes = async () => {
       try {
-        const response = await axios.get(`https://localhost:7119/api/Resumes/${seekerId}`);
+        const response = await axios.get(`https://localhost:7119/api/Resumes/${seekerId}`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setResumes(response.data.$values);
       } catch (error) {
         console.error('Error fetching resumes:', error);
@@ -54,10 +60,15 @@ const JobApplicationForm = () => {
         resumeId: formValue.resumeId,
         coverLetter: formValue.coverLetter,
       };
-      await axios.post('https://localhost:7119/api/JobApplications', applyJobDto);
+      await axios.post('https://localhost:7119/api/JobApplications', applyJobDto,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       alert('Job Application created successfully!');
+      navigate(`/jobseeker/applications/${seekerId}`);
     } catch (error) {
-      console.error('Error creating job application:', error);
+      alert('Error creating job application:', error);
     }
   };
 
@@ -69,8 +80,7 @@ const JobApplicationForm = () => {
             <MDBCardBody>
               <h3 style={{ marginTop: "10px", marginBottom: "30px" }}>Apply for Job</h3>
               <MDBValidation onSubmit={onSubmit}>
-                
-                {/* Cover Letter */}
+
                 <MDBValidationItem tooltip className="mb-3" feedback="Please provide a cover letter." invalid>
                   <MDBTextArea
                     name="coverLetter"
@@ -82,7 +92,6 @@ const JobApplicationForm = () => {
                   />
                 </MDBValidationItem>
 
-                {/* Resume Dropdown */}
                 <MDBValidationItem tooltip className="mb-3" feedback="Please select a resume." invalid>
                   <div className="position-relative">
                     <select
@@ -95,7 +104,7 @@ const JobApplicationForm = () => {
                       <option value="">Select Resume</option>
                       {resumes.map((resume) => (
                         <option key={resume.resumeId} value={resume.resumeId}>
-                          {resume.resumePath} {/* You can display the path or any other relevant info */}
+                          {resume.resumePath} 
                         </option>
                       ))}
                     </select>

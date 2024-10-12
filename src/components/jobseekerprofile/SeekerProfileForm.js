@@ -33,11 +33,17 @@ const ProfileForm = ({userId}) => {
     dateIssued: ''
   });
 
+  const token = localStorage.getItem("Auth-Token");
+
   useEffect(() => {
 
     const fetchUserDetails = async () => {
       try {
-        const response = await axios.get(`https://localhost:7119/api/Users/details/${userId}`);
+        const response = await axios.get(`https://localhost:7119/api/Users/details/${userId}`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const userData = response.data;
         setFormValue((prev) => ({
           ...prev,
@@ -68,9 +74,27 @@ const ProfileForm = ({userId}) => {
     setNewCertificate({ ...newCertificate, [name]: value });
   };
 
-  const handleCertificateImageChange = (e) => {
+  const handleCertificateImageChange = async (e) => {
     const file = e.target.files[0];
-    setNewCertificate({ ...newCertificate, image: file });
+    if (file) {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const uploadResponse = await axios.post("https://localhost:7119/api/FileUpload/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        const {fileId} = uploadResponse.data;
+
+        setNewCertificate({ ...newCertificate, image: `https://drive.google.com/uc?export=view&id=${fileId}` });
+        alert("Certificate added successfully.");
+      } catch (error) {
+        alert('Error uploading certificate:', error);
+      }
+    }
   };
 
   const handleAddEducation = () => {
@@ -95,12 +119,33 @@ const ProfileForm = ({userId}) => {
     }
   };
 
-  const handleResumeUpload = (e) => {
+  const handleResumeUpload = async (e) => {
     const files = e.target.files;
-    const resumePaths = Array.from(files).map((file) => file.name);
+
+    const uploadedResumes = [];
+
+    for (let file of files) {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const uploadResponse = await axios.post("https://localhost:7119/api/FileUpload/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        const { fileId } = uploadResponse.data;
+        const resumeUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+        uploadedResumes.push(resumeUrl);
+      } catch (error) {
+        alert('Error uploading resume:', error);
+      }
+    }
+
     setFormValue((prev) => ({
       ...prev,
-      resumes: [...prev.resumes, ...resumePaths]
+      resumes: [...prev.resumes, ...uploadedResumes],
     }));
   };
 
@@ -124,14 +169,18 @@ const ProfileForm = ({userId}) => {
       })),
       certifications: formValue.certificates.map(cert => ({
         CertificationName: cert.name,
-        CertificatePicturePath: cert.image ? URL.createObjectURL(cert.image) : null,
+        CertificatePicturePath: cert.image,
         DateIssued: cert.dateIssued,
       })),
     };
 
   
     try {
-      const response = await axios.post('https://localhost:7119/api/JobSeekers/ProfileCreation',profileData);
+      const response = await axios.post('https://localhost:7119/api/JobSeekers/ProfileCreation',profileData,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       console.log('Profile created successfully:', response.data);
       if (response.status === 200) {
         const seekerId = response.data.seekerId;
@@ -140,12 +189,12 @@ const ProfileForm = ({userId}) => {
         navigate('/jobseeker/home');
     }
     } catch (error) {
-      console.error('Error creating profile:', error);
+      alert('Error creating profile:', error);
     }
   };
 
   return (
-    <div className="form-container">
+    <div className="profile-form-container">
       <h3 style={{marginTop:"20px",marginBottom:"30px"}}>Create Profile</h3>
       <form onSubmit={handleSubmit}>
         
@@ -237,7 +286,6 @@ const ProfileForm = ({userId}) => {
           />
         </div>
 
-        {/* Education Section */}
         <div className="section-header">
           <h6 style={{fontWeight:"bold"}}>Education</h6>
           <IconButton onClick={() => setOpenEducationDialog(true)}>
@@ -253,7 +301,6 @@ const ProfileForm = ({userId}) => {
             ))}
         </div>
 
-        {/* Certificate Section */}
         <div className="section-header">
           <h6 style={{fontWeight:"bold"}}>Certificates</h6>
           <IconButton onClick={() => setOpenCertificateDialog(true)}>
@@ -267,7 +314,7 @@ const ProfileForm = ({userId}) => {
                 {cert.name} (Issued on: {cert.dateIssued})
                 <br />
                 <img
-                  src={URL.createObjectURL(cert.image)}
+                  src={cert.image}
                   alt={cert.name}
                   className="certificate-preview"
                 />
@@ -275,7 +322,6 @@ const ProfileForm = ({userId}) => {
             ))}
         </div>
 
-        {/* Resume Section */}
         <div className="form-field">
           <h6 style={{fontWeight:"bold"}}>Resume</h6>
           <input type="file" multiple onChange={handleResumeUpload} style={{ marginTop: '10px'}}/>
@@ -283,7 +329,7 @@ const ProfileForm = ({userId}) => {
             {formValue.resumes.length > 0 &&
               formValue.resumes.map((resume, index) => (
                 <div key={index} className="resume-entry">
-                  {resume}
+                 Resume: {resume}
                 </div>
               ))}
           </div>
@@ -296,12 +342,11 @@ const ProfileForm = ({userId}) => {
         </div>
       </form>
 
-      {/* Education Dialog */}
       <Dialog open={openEducationDialog} onClose={() => setOpenEducationDialog(false)} PaperProps={{
     style: {
       marginTop: '30px',
       marginBottom: '30px',
-      borderRadius: '15px' // Rounded corners
+      borderRadius: '15px'
     }
   }}>
         <DialogTitle style={{marginBottom:"10px"}}>Add Education</DialogTitle>
@@ -341,12 +386,11 @@ const ProfileForm = ({userId}) => {
         </DialogActions>
       </Dialog>
 
-      {/* Certificate Dialog */}
       <Dialog open={openCertificateDialog} onClose={() => setOpenCertificateDialog(false)} PaperProps={{
     style: {
       marginTop: '30px',
       marginBottom: '30px',
-      borderRadius: '15px' // Rounded corners
+      borderRadius: '15px'
     }
   }}>
         <DialogTitle style={{marginBottom:"10px"}}>Add Certificate</DialogTitle>

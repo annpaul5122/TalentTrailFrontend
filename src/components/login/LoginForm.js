@@ -29,6 +29,7 @@ export default function LoginForm() {
 
   const [error, setError] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const [welcomeMessage, setWelcomeMessage] = useState('');
   const nav = useNavigate();
 
   const onChange = (e) => {
@@ -65,10 +66,14 @@ export default function LoginForm() {
 
         const userRole = decodedToken.role; 
         console.log("User Role:", userRole);
+
+        const firstName=decodedToken.sub;
     
-        setShowAlert(true);
-        setTimeout(async () => {
+        setTimeout(() => {
           setShowAlert(false);
+          setWelcomeMessage(`Welcome ${firstName}!`);
+      
+        setTimeout(async () => {
           if (userRole === 'Employer') {
             try {
               const employerProfileResponse = await axios.get(`https://localhost:7119/api/Employers/CheckProfile/${userId}`);
@@ -109,6 +114,8 @@ export default function LoginForm() {
           }
         }, 2000);
 
+      }, 2000);
+
       } else {
         throw new Error("Token is invalid or does not contain nameid");
       }
@@ -117,15 +124,16 @@ export default function LoginForm() {
       console.log("Error caught:", error);
     
       if (error.response && (error.response.status === 400 || error.response.status === 401)) {
-        nav("/not-authorized");
+        setError("Invalid email or password. Please try again.");
       } else {
-        console.error("Error:", error);
+        setError("Something went wrong. Please try again later.");
       }
     }
   };
 
   return (
     <MDBContainer fluid className="d-flex justify-content-center align-items-center vh-100">
+
       <MDBRow className="w-75" style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', borderRadius: '15px', overflow: 'hidden', backgroundColor: '#fff' }}>
         
         {/* Left Side - Illustration */}
@@ -173,12 +181,73 @@ export default function LoginForm() {
                   <MDBBtn type='submit' style={{ marginTop: '20px', backgroundColor: '#0A3D62',  borderRadius: '40px',fontSize:"14px" }}>Login</MDBBtn>
                 </div>
 
-                {showAlert && <div className="custom-alert">Login successful!</div>}
+                {showAlert && (
+                  <div style={{
+                    position: 'fixed',
+                    top: '20px',
+                    right: '20px',
+                    backgroundColor: '#d4edda',
+                    color: '#155724',
+                    padding: '10px 20px',
+                    borderRadius: '5px',
+                    boxShadow: '0px 4px 8px rgba(0,0,0,0.1)',
+                    zIndex: 1000
+                  }}>
+                    Login successful!
+                  </div>
+                )}
+
+                {welcomeMessage && (
+                  <div style={{
+                    position: 'fixed',
+                    top: '20px',
+                    right: '20px',
+                    backgroundColor: '#007bff',
+                    color: '#fff',
+                    padding: '10px 20px',
+                    borderRadius: '5px',
+                    boxShadow: '0px 4px 8px rgba(0,0,0,0.1)',
+                    zIndex: 1000,
+                    display: 'inline-block',  
+                    maxWidth: '300px',         
+                    wordWrap: 'break-word'
+                  }}>
+                    {welcomeMessage}
+                  </div>
+                )}
+
+                {error && (
+                  <div style={{
+                    position: 'fixed',
+                    top: '20px',
+                    right: '20px',
+                    backgroundColor: '#f8d7da',
+                    color: '#721c24',
+                    padding: '10px 20px',
+                    borderRadius: '5px',
+                    boxShadow: '0px 4px 8px rgba(0,0,0,0.1)',
+                    zIndex: 1000,
+                  }}>
+                    {error}
+                  </div>
+                )}
 
                 <MDBRow className='mt-3'>
                   <MDBCol className='text-center'>
                     <span style={{ fontSize: '13px' }}>Don't have an account? </span>
                     <Link to="/signup" style={{ color: '#0A3D62', textDecoration: 'underline', fontSize: '12px' }}>Sign Up</Link>
+                  </MDBCol>
+                </MDBRow>
+
+                <MDBRow className='mt-3'>
+                  <MDBCol className='text-center'>
+                    <span style={{ fontSize: '13px' }}> ---- or ---- </span>
+                  </MDBCol>
+                </MDBRow>
+
+                <MDBRow className='mt-3'>
+                  <MDBCol className='text-center'>
+                    <Link to="/forgotpwd" style={{ color: '#0A3D62', textDecoration: 'underline', fontSize: '12px' }}>Forgot Password?</Link>
                   </MDBCol>
                 </MDBRow>
 

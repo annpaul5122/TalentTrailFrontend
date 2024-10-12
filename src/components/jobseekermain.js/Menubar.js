@@ -24,9 +24,9 @@ const settings = ['View Profile', 'Logout'];
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
-  borderRadius: '25px', // Rounded corners
+  borderRadius: '25px',
   backgroundColor: alpha(theme.palette.common.white, 0.15),
-  boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.2)', // Shadow effect
+  boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.2)', 
   marginLeft: theme.spacing(2),
   marginRight: theme.spacing(2),
   height: '40px',
@@ -92,13 +92,28 @@ function Menubar() {
     }
   }
 
+  const handleDropDownClick = (settings) => {
+    handleCloseUserMenu();
+    if(settings === 'View Profile')
+    {
+      navigate('/jobseeker/view-profile');
+    }
+    if(settings==='Logout')
+      {
+        localStorage.removeItem("Auth-Token");
+        localStorage.removeItem("SeekerId");
+        navigate('/');
+        window.location.reload();
+      }
+  }
+
   const [searchTerm,setSearchTerm] = useState("")
 
   return (
     <AppBar position="static" sx={{ backgroundColor: '#f5f5f5', color: 'black' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
-          {/* Logo Image that links to Home */}
+         
           <Link to="/jobseeker/home">
             <img
               src={Logo}
@@ -107,9 +122,8 @@ function Menubar() {
             />
           </Link>
 
-          {/* Centered Menu and Search */}
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1 }}>
-            {/* Opportunities Button with Dropdown */}
+     
             <Box sx={{ position: 'relative' }}>
               <Button
                 aria-controls="menu-appbar"
@@ -133,7 +147,7 @@ function Menubar() {
                 }}
                 open={Boolean(anchorElNav)}
                 onClose={handleCloseNavMenu}
-                sx={{ marginTop: '15px', fontFamily: 'Poppins',borderRadius: '25px'}} // Position the dropdown below the AppBar
+                sx={{ marginTop: '15px', fontFamily: 'Poppins',borderRadius: '25px'}} 
               >
                 {pages.map((page) => (
                   <MenuItem key={page} onClick={()=>handleMenuItemClick(page)}>
@@ -143,7 +157,7 @@ function Menubar() {
               </Menu>
             </Box>
 
-            {/* Search Bar */}
+      
             <Search>
               <SearchIconWrapper>
                 <SearchIcon />
@@ -165,7 +179,6 @@ function Menubar() {
             </Search>
           </Box>
 
-          {/* Right Side Avatar with Dropdown */}
           <Box sx={{ flexGrow: 0 }}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0}}>
                 <Avatar alt="Profile Picture" src={Icon}/>
@@ -187,7 +200,7 @@ function Menubar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting} onClick={()=> handleDropDownClick(setting)}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}

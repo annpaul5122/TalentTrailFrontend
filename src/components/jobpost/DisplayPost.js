@@ -3,6 +3,7 @@ import { MDBBadge, MDBBtn, MDBTable, MDBTableHead, MDBTableBody } from 'mdb-reac
 import { Modal, Form, Button } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import noResultsImage from '../../assets/images/No Results.svg';
 
 export default function DisplayPost({ jobPosts }) {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export default function DisplayPost({ jobPosts }) {
   });
   const [companies, setCompanies] = useState([]);
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const token = localStorage.getItem("Auth-Token");
 
   const getBadgeColor = (employmentType) => {
     switch (employmentType) {
@@ -58,14 +60,22 @@ export default function DisplayPost({ jobPosts }) {
 
   useEffect(() => {
     if (isModalOpen) {
-      axios.get('https://localhost:7119/api/CompanyDetails')
+      axios.get('https://localhost:7119/api/CompanyDetails',{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
         .then(response => setCompanies(response.data.$values))
         .catch(error => console.error('Failed to fetch companies', error));
     }
   }, [isModalOpen]);
 
   const handleViewApplicants = (selectedJob) => {
-    navigate(`/employer/jobpost/posts/viewapplicants/${selectedJob.jobId}`); 
+    navigate(`/employer/jobpost/posts/viewapplicants/${selectedJob.jobId}`,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }); 
   };
 
   const handleSave = async () => {
@@ -82,15 +92,23 @@ export default function DisplayPost({ jobPosts }) {
         CompanyId: formData.companyId,
       };
 
+      console.log("company",formData.companyId);
+
 
       try {
+        console.log(selectedJob.jobId);
         await axios.put(
           `https://localhost:7119/api/JobPosts/${selectedJob.jobId}`,
-          updatedJobPost
+          updatedJobPost,{
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setSelectedJob(null); 
         setIsModalOpen(false); 
         alert('Job post updated successfully!'); 
+        window.location.reload();
       } catch (error) {
         console.error('Failed to update job post:', error);
         alert('Failed to update job post. Please try again.'); 
@@ -101,10 +119,15 @@ export default function DisplayPost({ jobPosts }) {
   const handleDelete = async () => {
     if (selectedJob) {
       try {
-        await axios.delete(`https://localhost:7119/api/JobPosts/${selectedJob.jobId}`);
+        await axios.delete(`https://localhost:7119/api/JobPosts/${selectedJob.jobId}`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setSelectedJob(null);
         setIsModalOpen(false);
         alert('Job post deleted successfully!'); 
+        window.location.reload();
       } catch (error) {
         console.error('Failed to delete job post:', error);
         alert('Failed to delete job post. Please try again.'); 
@@ -120,7 +143,15 @@ export default function DisplayPost({ jobPosts }) {
   ];
 
   return (
-    <>
+    <div>
+       {jobPosts.length === 0 ? (
+        <div className="no-results-container text-center">
+          <img src={noResultsImage} alt="No results found" className="no-results-image" style={{ width: '400px', height: 'auto' }} />
+          <h4 style={{ color: "#0A3D62", textAlign: "center", fontWeight: "bold" }}>Oops.. No records found</h4>
+        </div>
+      ) : (
+        <>
+      <h3 style={{ marginBottom: '50px' }}>Your Job Posts</h3>
       <MDBTable align='middle'>
         <MDBTableHead>
           <tr>
@@ -162,6 +193,8 @@ export default function DisplayPost({ jobPosts }) {
           ))}
         </MDBTableBody>
       </MDBTable>
+      </>
+      )}
 
       {/* Modal to display the selected job details */}
       {selectedJob && (
@@ -334,6 +367,6 @@ export default function DisplayPost({ jobPosts }) {
           </Button>
         </Modal.Footer>
       </Modal>
-    </>
+   </div>
   );
 }

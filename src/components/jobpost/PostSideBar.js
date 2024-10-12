@@ -1,15 +1,46 @@
 import React, { useState } from 'react';
-import { FaPlus, FaUser,FaHome,  FaBriefcase } from "react-icons/fa";
+import { FaPlus, FaHome,  FaBriefcase } from "react-icons/fa";
 import '../../styles/jobpost/PostSideNavBar.css';
-import Logo from '../../assets/images/logo-trail1.png'
-import {Link} from 'react-router-dom'
+import Icon from '../../assets/images/profile.png';
+import {Link,useNavigate} from 'react-router-dom'
+import IconButton from '@mui/material/IconButton';
+import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+
+
+const settings = ['View Profile', 'Logout'];
 
 const PostSideBar = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const navigate = useNavigate();
 
-  // Toggle sidebar collapse state
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
+  };
+
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  const handleDropDownClick = (setting) => {
+    handleCloseUserMenu();
+    if (setting === 'View Profile') {
+      navigate('/employer/view-profile');
+    }
+    if (setting === 'Logout') {
+      localStorage.removeItem("Auth-Token");
+      localStorage.removeItem("EmployerId");
+      navigate('/');
+      window.location.reload();
+    }
   };
 
   const employerId = localStorage.getItem("EmployerId");
@@ -17,7 +48,7 @@ const PostSideBar = () => {
 
   return (
     <div className={`wrapper ${isCollapsed ? "collapsed" : ""}`}>
-      {/* Top Navbar */}
+   
       <div className="top_navbar">
         <div className="hamburger" onClick={toggleSidebar}>
           <div className="bar"></div>
@@ -26,12 +57,39 @@ const PostSideBar = () => {
         </div>
         <div className="top_menu">
           <ul>
-            <li><a href="#"><FaUser /></a></li>
+            <li>
+              <Box sx={{ flexGrow: 0 }}>
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="Profile Picture" src={Icon} />
+                </IconButton>
+                <Menu
+                  sx={{ mt: '45px', borderRadius: '8px' }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  {settings.map((setting) => (
+                    <MenuItem key={setting} onClick={() => handleDropDownClick(setting)}>
+                      <Typography textAlign="center">{setting}</Typography>
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </Box>
+            </li>
           </ul>
         </div>
       </div>
 
-      {/* Sidebar */}
       <div className="sidebar">
         <ul>
           <li>

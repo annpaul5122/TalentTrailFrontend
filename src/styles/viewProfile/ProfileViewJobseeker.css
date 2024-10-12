@@ -1,0 +1,66 @@
+/* ProfileViewJobseeker.css */
+
+/* Container styling */
+.profile-view-container {
+    background-color: #f5f5f5; /* Smoke grey background */
+    padding: 2rem; /* Add padding for spacing */
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    max-width: 800px; /* Limit the maximum width */
+    margin: 0 auto; /* Center the container */
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+/* Profile picture container */
+.profile-pic-container {
+    margin-bottom: 20px; /* Space below the profile picture */
+    display: flex;
+    justify-content: center; /* Center the profile picture */
+}
+
+/* Image styling */
+.profile-image {
+    border-radius: 50%; /* Make image circular */
+    border: 2px solid #007bff; /* Optional border color */
+}
+
+/* Heading styles */
+.profile-name {
+    margin-bottom: 10px; /* Space below the name */
+    color: #343a40; /* Dark grey color */
+}
+
+.profile-subheading {
+    margin-top: 20px; /* Space above education/certification headings */
+    color: #495057; /* Slightly lighter grey for subheadings */
+}
+
+/* List styling */
+.profile-list {
+    list-style-type: none; /* Remove default list styling */
+    padding: 0; /* Remove padding */
+}
+
+.profile-list-item {
+    background: #ffffff; /* White background for list items */
+    margin: 5px 0; /* Space between list items */
+    padding: 10px; /* Padding inside list items */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Button styling */
+.edit-btn {
+    background-color: #007bff; /* Primary button color */
+    color: #ffffff; /* Button text color */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Padding inside button */
+    border-radius: 5px; /* Rounded corners for button */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Transition effect */
+}
+
+.edit-btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}

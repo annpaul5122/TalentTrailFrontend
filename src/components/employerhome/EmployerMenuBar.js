@@ -14,7 +14,7 @@ import Logo from '../../assets/images/logo-trail1.png';
 import Icon from '../../assets/images/profile.png';
 import { Link,useNavigate } from 'react-router-dom';
 
-const pages = ['Job Post','Saved Talents'];
+const pages = ['Job Post'];
 const settings = ['View Profile', 'Logout'];
 
 function EmployerMenuBar() {
@@ -42,7 +42,22 @@ function EmployerMenuBar() {
     handleCloseNavMenu();
     if(page==='Job Post')
     {
-      navigate('/employer/jobpost');
+      navigate('/employer/jobpost/main');
+    }
+  }
+
+  const handleDropDownClick = (settings) => {
+    handleCloseUserMenu();
+    if(settings==='View Profile')
+    {
+      navigate('/employer/view-profile');
+    }
+    if(settings==='Logout')
+    {
+      localStorage.removeItem("Auth-Token");
+      localStorage.removeItem("EmployerId");
+      navigate('/');
+      window.location.reload();
     }
   }
 
@@ -101,7 +116,7 @@ function EmployerMenuBar() {
                 }}
                 open={Boolean(anchorElNav)}
                 onClose={handleCloseNavMenu}
-                sx={{ marginTop: '15px', fontFamily: 'Poppins', borderRadius: '25px' }} // Position the dropdown below the AppBar
+                sx={{ marginTop: '15px', fontFamily: 'Poppins', borderRadius: '25px' }}
               >
                 {pages.map((page) => (
                   <MenuItem key={page} onClick={()=>handleMenuItemClick(page)}>
@@ -111,7 +126,6 @@ function EmployerMenuBar() {
               </Menu>
             </Box>
 
-          {/* Right Side Avatar with Dropdown */}
           <Box sx={{ flexGrow: 0 }}>
             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
               <Avatar alt="Profile Picture" src={Icon} />
@@ -133,7 +147,7 @@ function EmployerMenuBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting} onClick={()=>handleDropDownClick(setting)}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}

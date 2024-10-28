@@ -90,6 +90,31 @@ export default function ViewApplicants() {
     }
   };
 
+  const handleDownload = async (applicationId) => {
+    const url = `https://localhost:7119/api/JobApplications/DownloadApplicantPDF/${applicationId}`;
+    
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: 'blob', // Important to handle binary data
+      });
+
+      // Create a blob URL and trigger download
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', `Applicant_Profile_${applicationId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      alert('Failed to download applicant PDF.');
+    }
+  };
+
   return (
     <div>
        {applicants.length === 0 ? (
@@ -108,6 +133,7 @@ export default function ViewApplicants() {
             <th scope='col'>Status</th>
             <th scope='col'>Application Date</th>
             <th scope='col'>Actions</th>
+            <th scope='col'>Download</th>
           </tr>
         </MDBTableHead>
         <MDBTableBody>
@@ -133,6 +159,11 @@ export default function ViewApplicants() {
                   View
                 </MDBBtn>
               </td>
+              <td>
+                    <MDBBtn color='link' rounded size='sm' onClick={() => handleDownload(applicant.applicationId)}>
+                      Download
+                    </MDBBtn>
+                  </td>
             </tr>
           ))}
         </MDBTableBody>
